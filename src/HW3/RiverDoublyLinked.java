@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class RiverDoublyLinked {
     // instance variables
-    private int size; // num of slots in river
+
     private int numAnimals = 0; // number of actual animals
     // private Animal[] animals; // this holds our animal objects
     private DoublyLinkedList<Animal> animals = new DoublyLinkedList<>();
@@ -14,7 +14,7 @@ public class RiverDoublyLinked {
     // constructors
     public RiverDoublyLinked(){
         DoublyLinkedList<Animal> animals = new DoublyLinkedList<>();
-        size = 0;
+
     }
 
     // methods
@@ -72,6 +72,48 @@ public class RiverDoublyLinked {
         }
     }
 
+    public void changeAnimal(String type, String place){
+        int temp_rand = rand.nextInt(2);
+            if (type == "Bear") {
+                if (place == "Up") {
+                    animals.removeFirst();
+                    animals.addFirst(new Bear());
+                }
+                else if (place == "Down") {
+                    animals.removeLast();
+                    animals.addLast(new Bear());
+                }
+                else if (place == "Rand") {
+                    if(temp_rand == 0) {
+                        animals.removeFirst();
+                        animals.addFirst(new Bear());
+                    }
+                    else if(temp_rand == 1){
+                        animals.removeLast();
+                        animals.addLast(new Bear());
+                    }
+
+                }
+            }
+            else if (type == "Fish") {
+                if (place == "Up") {
+                    animals.removeFirst();
+                    animals.addFirst(new Fish());
+                }
+                else if (place == "Down") {
+                    animals.removeLast();
+                    animals.addLast(new Fish());
+                }
+                else if (place == "Rand") {
+                    if(temp_rand == 0){
+                        animals.removeFirst();
+                        animals.addFirst(new Fish());}
+                    else if(temp_rand == 1){
+                        animals.removeLast();
+                        animals.addLast(new Fish());}
+                }
+            }
+        }
 
 
     public void initialize(int spaces) {
@@ -95,114 +137,99 @@ public class RiverDoublyLinked {
     public boolean allBears(){
         Boolean tempBool = true;
         int tempSize = animals.size();
-        DoublyLinkedList<Animal> tempRiver = new DoublyLinkedList<Animal>();
         for(int j = 0; j <= tempSize; j ++){
             String tempSingleAnimal = animals.first().toString();
-
-            if (tempSingleAnimal != "Bear"){
+            if (tempSingleAnimal != "Bear" && tempBool){
                 tempBool = false;
-                break;
             }
-
-            tempRiver.addLast(animals.removeFirst());
+            animals.addLast(animals.removeFirst());
             }
-
+            animals.addFirst(animals.removeLast());
     return tempBool;
     }
 
-    /*
-    public void moveUp(int place) {
-        if (place != 0 && animals[place] != null) {
-            // move animal to different empty cell condition
-            if (animals[place - 1] == null) {
-                animals[place - 1] = animals[place];
-                animals[place] = null;
-            }
-            // mate animals condition
-            else if (animals[place - 1].toString() == animals[place].toString()) {
-                int upSpaces = 0;
-                int downSpaces = 0;
-                Boolean tempBool = true;
-                while (tempBool) {
-                    upSpaces++;
-                    downSpaces++;
-                    if ((place - upSpaces) > -1 && animals[place - upSpaces] == null) {
-                        animals[place - upSpaces] = animals[place];
-                        tempBool = false;
-                    }
-                    else if ((place + downSpaces) < size && animals[place + downSpaces] == null) {
-                        animals[place + downSpaces] = animals[place];
-                        tempBool = false;
-                    }
-                    else if(upSpaces > size || downSpaces > size){break;}
+
+    public void moveUp() {
+        if(animals.first().toString() == "Empty") {
+        // move animal to different empty cell condition
+        changeAnimal(animals.toString(), "Up");
+        }
+        // mate animals condition
+        else if(animals.toString() == animals.first().toString() && animals.toString() != "Empty"){
+            String tempAnimalType = animals.toString();
+            int tempSize = animals.size();
+            boolean tempBool = true;
+            for(int i=0; i<tempSize; i++ ){
+                animals.addLast(animals.removeFirst());
+                if(tempBool && animals.first().toString()== "Empty"){
+                   changeAnimal(tempAnimalType, "Up");
+                   tempBool = false;
                 }
-            }
-            // bear eats fish condition
-            else if (animals[place - 1].toString() != animals[place].toString()) {
-                if (animals[place].toString() == "Fish") {
-                animals[place] = new Bear();
-            }
-                else if (animals[place - 1].toString() == "Fish") {
-                animals[place - 1] = new Bear();
+
+            };
+        }
+        // bear eats fish condition
+        else if(animals.first().toString() != animals.toString() && animals.toString() != "Empty") {
+            if(animals.first().toString() == "Fish"){changeAnimal("Bear","Up");}
+            else if(animals.toString() == "Fish"){
+                animals.addFirst(animals.removeLast());
+                changeAnimal("Bear", "Up");
+                animals.addLast(animals.removeFirst());
             }
         }
-    }
-    }
-
-    public void moveDown(int place){
-        if(place != size && animals[place] != null){
-            // move animal to different empty cell condition
-            if(animals[place+1] == null && (place + 1) < size ){
-                animals[place+1] = animals[place];
-                animals[place] = null;
-            }
-            // mate animals condition
-            else if(animals[place+1].toString() == animals[place].toString()){
-                int upSpaces = 0;
-                int downSpaces = 0;
-                Boolean tempBool = true;
-                while(tempBool){
-                    upSpaces++;
-                    downSpaces++;
-                    if((place + downSpaces) < size && animals[place+downSpaces] == null){
-                        animals[place+downSpaces] = animals[place];
-                        tempBool = false;
-                    }
-
-                    else if((place - upSpaces) > -1 && animals[place-upSpaces] == null){
-                        animals[place-upSpaces] = animals[place];
-                        tempBool = false;
-                    }
-                    else if(upSpaces > size || downSpaces > size){break;}
-                }
-            }
-            // bear eats fish condition
-            else if(animals[place+1].toString() != animals[place].toString()){
-                if(animals[place].toString() == "Fish"){animals[place] = new Bear();}
-                else if(animals[place+1].toString() == "Fish"){animals[place+1] = new Bear();}
-
-            }
         }
-    }
+
+
+     public void moveDown() {
+         if(animals.last().toString() == "Empty") {
+         // move animal to different empty cell condition
+         changeAnimal(animals.toString(), "Down");
+         }
+         // mate animals condition
+         else if(animals.toString() == animals.last().toString() && animals.toString() != "Empty"){
+             String tempAnimalType = animals.toString();
+             int tempSize = animals.size();
+             boolean tempBool = true;
+             for(int i=0; i<tempSize; i++ ){
+                 animals.addFirst(animals.removeLast());
+                 if(tempBool && animals.last().toString()== "Empty"){
+                    changeAnimal(tempAnimalType, "Down");
+                    tempBool = false;
+                 }
+
+             };
+         }
+         // bear eats fish condition
+        else if(animals.last().toString() != animals.toString() && animals.toString() != "Empty") {
+             if(animals.last().toString() == "Fish"){changeAnimal("Bear","Down");}
+             else if(animals.toString() == "Fish"){
+                 animals.addFirst(animals.removeLast());
+                 changeAnimal("Bear", "Up");
+                 animals.addLast(animals.removeFirst());
+             }
+         }
+         }
+
 
     public void iterate(int times){
         while(times > 0){
-            int tempSize = size;
+            int tempSize = animals.size();
             for(int i = 0; i < tempSize -1; i++){
                 int choice = rand.nextInt(3);
-                if(choice == 0 && i != 0){moveUp(i);}
-                else if(choice == 1 && i != tempSize){moveDown(i);}
+                if(choice == 0 ){moveUp();}
+                else if(choice == 1){moveDown();}
+                animals.addLast(animals.removeFirst());
             }
             times--;
             if(allBears()){break;}
         }
 
     }
-    */
+
     public String toString(){
             String comp = "This river is composed of : \n";
 
-            comp += animals.toString();
+            comp += animals.toList();
             return comp;
     }
 
@@ -211,19 +238,19 @@ public class RiverDoublyLinked {
         int b = 0;
         int f = 0;
         int n = 0;
-        DoublyLinkedList<Animal> tempRiver = animals;
+
 
         for (int i = 0; i <= tempSize ; i++){
+            String tempSingleAnimal = animals.first().toString();
 
-            String tempSingleAnimal = tempRiver.removeFirst().toString();
+
             if (tempSingleAnimal == "Empty"){ n++; }
             else if(tempSingleAnimal == "Fish"){f++;}
             else if(tempSingleAnimal == "Bear"){b++;}
-            tempRiver.addLast(animals.removeFirst());
+            animals.addLast(animals.removeFirst());
 
         }
-        animals = tempRiver;
-
+        animals.addFirst(animals.removeLast());
         return "This river is composed of " + b + " bears, " + f + " fish, and " + n + " empty spaces.";
     }
 
